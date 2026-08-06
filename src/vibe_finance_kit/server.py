@@ -1,7 +1,18 @@
 from __future__ import annotations
 
 import json
+import warnings
 from typing import Any
+
+from authlib.deprecate import AuthlibDeprecationWarning
+
+# FastMCP 2.x currently imports Authlib's legacy jose compatibility module.
+# Keep that upstream deprecation notice out of the MCP stdio channel.
+warnings.filterwarnings(
+    "ignore",
+    message=r"authlib\.jose module is deprecated.*",
+    category=AuthlibDeprecationWarning,
+)
 
 from fastmcp import FastMCP
 

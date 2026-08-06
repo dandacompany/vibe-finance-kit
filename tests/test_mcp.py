@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from fastmcp import Client
-
 from vibe_finance_kit.server import mcp
+from fastmcp import Client
 
 
 class McpTests(unittest.IsolatedAsyncioTestCase):
