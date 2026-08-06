@@ -49,6 +49,8 @@ hermes -p ada mcp add vibe-finance-kit \
 hermes -p ada mcp test vibe-finance-kit
 ```
 
+`mcp add`가 네 도구를 보여준 뒤 `Enable all 4 tools? [Y/n/select]`를 물으면 `Y`를 입력한다. 비대화형 셸에서는 입력이 없으면 등록이 취소되므로, 녹화와 실습에서는 이 확인 장면을 생략하지 않는다.
+
 등록 후에는 새 Hermes 세션을 열고 다음을 확인한다.
 
 1. `finance_kit_doctor`가 `order_tools: []`를 반환한다.
