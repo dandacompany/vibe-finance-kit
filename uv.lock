@@ -1464,11 +1464,15 @@ name = "vibe-finance-kit"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "authlib" },
     { name = "fastmcp" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "fastmcp", specifier = ">=2.14,<3" }]
+requires-dist = [
+    { name = "authlib", specifier = ">=1.6,<2" },
+    { name = "fastmcp", specifier = ">=2.14,<3" },
+]
 
 [[package]]
 name = "websockets"
