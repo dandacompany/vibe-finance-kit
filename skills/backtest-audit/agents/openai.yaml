@@ -1,0 +1,11 @@
+interface:
+  display_name: "Backtest Audit"
+  short_description: "미래참조와 과적합을 막는 백테스트 품질 감사"
+  default_prompt: "Use $backtest-audit to audit a backtest report before it informs a decision."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "vibe-finance-kit"
+      description: "Read-only BacktestReport contract audit"
+policy:
+  allow_implicit_invocation: true

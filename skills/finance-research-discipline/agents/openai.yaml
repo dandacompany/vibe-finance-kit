@@ -1,0 +1,6 @@
+interface:
+  display_name: "Finance Research Discipline"
+  short_description: "출처와 가용 시점을 보존하는 금융 리서치 규율"
+  default_prompt: "Use $finance-research-discipline to plan an evidence-first ETF research task."
+policy:
+  allow_implicit_invocation: true

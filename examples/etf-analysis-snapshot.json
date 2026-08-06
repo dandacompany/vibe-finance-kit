@@ -1,0 +1,21 @@
+{
+  "artifact_id": "course-fixture-etf-069500",
+  "artifact_type": "ETFAnalysisSnapshot",
+  "as_of": "2026-08-06T15:30:00+09:00",
+  "available_at": "2026-08-06T18:00:00+09:00",
+  "source": "course-fixture-not-live-data",
+  "symbol": "069500",
+  "currency": "KRW",
+  "total_expense_ratio": 0.0015,
+  "tracking_error": 0.002,
+  "aum": 1000000000000,
+  "avg_daily_turnover_20d": 50000000000,
+  "premium_discount": 0.0004,
+  "index_per": 12.5,
+  "index_pbr": 1.1,
+  "index_dividend_yield": 0.022,
+  "index_valuation_method": "course-fixture",
+  "warnings": [
+    "fixture_only_not_for_investment_decisions"
+  ]
+}

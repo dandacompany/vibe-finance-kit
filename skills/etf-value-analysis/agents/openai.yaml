@@ -1,0 +1,11 @@
+interface:
+  display_name: "ETF Value Analysis"
+  short_description: "ETF 상품 구조와 기초지수 가치지표를 함께 분석"
+  default_prompt: "Use $etf-value-analysis to compare ETF snapshots without making an order decision."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "vibe-finance-kit"
+      description: "Read-only ETF snapshot validation and comparison"
+policy:
+  allow_implicit_invocation: true

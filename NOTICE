@@ -1,0 +1,12 @@
+Vibe Finance Kit
+Copyright 2026 Dante Labs.
+
+This project is a selective educational derivative informed by Vibe-Trading:
+https://github.com/HKUDS/Vibe-Trading
+
+Vibe-Trading is Copyright 2026 HKUDS contributors and is distributed under
+the MIT License. The upstream copyright and permission notice are preserved
+in docs/VIBE_TRADING_LICENSE.
+
+No Vibe-Trading broker execution code, agent runtime, swarm runtime, or UI is
+included in this project. Adapted methodology is identified in UPSTREAM.md.

@@ -1,0 +1,18 @@
+{
+  "artifact_id": "course-fixture-backtest-1",
+  "artifact_type": "BacktestReport",
+  "data_snapshot_id": "course-fixture-market-1",
+  "strategy_spec_id": "course-fixture-strategy-1",
+  "train_period": ["2021-01-01", "2024-12-31"],
+  "test_period": ["2025-01-01", "2025-12-31"],
+  "signal_at": "close",
+  "execution_at": "next_open",
+  "execution_rule": "next_bar",
+  "initial_capital": 10000000,
+  "transaction_cost_bps": 10,
+  "benchmark": "buy_and_hold_same_period_and_cost",
+  "warnings": ["fixture_only_not_a_performance_claim"],
+  "parameter_selection_used_test_period": false,
+  "hand_check_passed": true,
+  "code_version": "course-fixture"
+}
