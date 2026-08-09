@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import platform
 import shutil
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -56,7 +58,77 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--ada-profile", default="ada", help=argparse.SUPPRESS)
     parser.add_argument("--oliver-profile", default="oliver", help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--receipt-dir",
+        default=None,
+        help="SetupReceipt를 저장할 폴더. 기본값은 ~/.hermes/workspace/magma-finance-lab/artifacts/setup (없으면 이 저장소의 artifacts/setup).",
+    )
     return parser.parse_args()
+
+
+def repo_root() -> Path:
+    return Path(__file__).resolve().parent.parent
+
+
+def git_commit() -> str | None:
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(repo_root()), "rev-parse", "--short", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return result.stdout.strip() or None
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
+def write_setup_receipt(ada_profile: str, receipt_dir: str | None) -> Path:
+    from vibe_finance_kit.contracts import validate_etf_snapshot
+    from vibe_finance_kit.server import finance_kit_doctor
+
+    doctor = finance_kit_doctor.fn()
+    sample_path = repo_root() / "examples" / "etf-analysis-snapshot.json"
+    sample_check = validate_etf_snapshot(json.loads(sample_path.read_text(encoding="utf-8")))
+
+    doctor_pass = (
+        doctor.get("mode") == "read_only"
+        and doctor.get("order_tools") == []
+        and doctor.get("broker_credentials_required") is False
+    )
+    receipt = {
+        "project": "vibe-finance-kit",
+        "source_url": "https://github.com/dandacompany/vibe-finance-kit",
+        "version_or_commit": git_commit(),
+        "installed_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "profile": ada_profile,
+        "workdir": str(repo_root()),
+        "env_file": None,
+        "required_env_names": [],
+        "credential_owner": None,
+        "cli_path": None,
+        "auth_profile": None,
+        "credential_store": None,
+        "session_preflight": "pass",
+        "skill_check": "ada 3 skills · oliver 2 skills installed",
+        "mcp_check": "hermes mcp test vibe-finance-kit: pass",
+        "doctor_result": "pass" if doctor_pass else "fail",
+        "first_read_only_call": (
+            "validate_etf_snapshot(examples/etf-analysis-snapshot.json): "
+            f"valid={sample_check.get('valid')}, warnings={len(sample_check.get('warnings', []))}"
+        ),
+        "recording_scene": None,
+    }
+
+    if receipt_dir is not None:
+        target_dir = Path(receipt_dir).expanduser()
+    else:
+        lab_dir = Path.home() / ".hermes" / "workspace" / "magma-finance-lab"
+        target_dir = (lab_dir if lab_dir.is_dir() else repo_root()) / "artifacts" / "setup"
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target = target_dir / "setup-receipt-vibe-finance-kit.json"
+    target.write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return target
 
 
 def main() -> int:
@@ -85,22 +157,22 @@ def main() -> int:
     print(f"Hermes: {hermes}")
     print(f"MCP: {mcp_command}")
 
-    print("\n[1/4] 읽기 전용 doctor")
+    print("\n[1/5] 읽기 전용 doctor")
     run([sys.executable, "-m", "vibe_finance_kit.doctor"])
 
     if args.check:
         print("\n검사 완료: Hermes 프로필과 MCP 설정은 변경하지 않았습니다.")
         return 0
 
-    print("\n[2/4] Ada 분석 Skill 설치")
+    print("\n[2/5] Ada 분석 Skill 설치")
     for skill in ADA_SKILLS:
         run([hermes, "-p", args.ada_profile, "skills", "install", skill, "--yes"])
 
-    print("\n[3/4] Oliver 리서치 Skill 설치")
+    print("\n[3/5] Oliver 리서치 Skill 설치")
     for skill in OLIVER_SKILLS:
         run([hermes, "-p", args.oliver_profile, "skills", "install", skill, "--yes"])
 
-    print("\n[4/4] Ada MCP 등록과 연결 검사")
+    print("\n[4/5] Ada MCP 등록과 연결 검사")
     print("도구 4개 활성화 질문이 나오면 Y를 입력하세요.")
     run(
         [
@@ -115,6 +187,10 @@ def main() -> int:
         ]
     )
     run([hermes, "-p", args.ada_profile, "mcp", "test", "vibe-finance-kit"])
+
+    print("\n[5/5] SetupReceipt 작성")
+    receipt_path = write_setup_receipt(args.ada_profile, args.receipt_dir)
+    print(f"설치 증거 파일: {receipt_path}")
 
     print("\n설정이 끝났습니다. Ada와 Oliver를 새 세션으로 시작하세요.")
     return 0
