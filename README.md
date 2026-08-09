@@ -26,49 +26,43 @@ Vibe-Trading에서 검증된 투자 리서치 원칙을 Hermes 실습에 맞게 
 
 세부 채택·제외 목록은 [UPSTREAM.md](UPSTREAM.md), 저작권 고지는 [NOTICE](NOTICE)를 본다.
 
-## 로컬 개발 설치
+## Hermes 빠른 설치
 
 ```bash
 git clone https://github.com/dandacompany/vibe-finance-kit.git
 cd vibe-finance-kit
-cp .env.example .env
-python3 -m venv .venv
-.venv/bin/pip install -e .
-.venv/bin/vibe-finance-kit
+uv run python scripts/setup_hermes.py
 ```
 
-기본 기능은 API 키가 필요 없다. `.env`에는 데이터 공급자를 나중에 추가할 때 사용할 **이름만** 두며, 실제 값은 저장소에 커밋하지 않는다.
+같은 명령을 macOS, Linux·WSL, Windows PowerShell에서 사용한다. 이 명령은 프로젝트
+환경과 패키지를 설치하고, Ada에는 분석 Skill 3개와 읽기 전용 MCP를,
+Oliver에는 리서치 Skill 2개를 등록한다. MCP 도구 4개 활성화 질문이 나오면 `Y`를
+입력한다. 기본 기능에는 API 키와 `.env`가 필요하지 않다.
 
-## MCP 등록
+설치가 끝나면 Ada와 Oliver를 새 세션으로 시작한다. Ada에게
+`finance_kit_doctor`를 호출하도록 요청해 `mode=read_only`, `tools=4`,
+`order_tools=[]`, `broker_credentials_required=false`를 확인한다.
 
-프로젝트 절대 경로를 확인한 뒤 Hermes 프로필에 stdio 서버를 등록한다.
+검증된 환경:
+
+| 환경 | MCP 실행 파일 | 전체 setup 결과 |
+| --- | --- | --- |
+| macOS | `.venv/bin/vibe-finance-kit` | Skill 3/2개·MCP 4개 통과 |
+| Linux·WSL | `.venv/bin/vibe-finance-kit` | Skill 3/2개·MCP 4개 통과 |
+| Windows PowerShell | `.venv\Scripts\vibe-finance-kit.exe` | Skill 3/2개·MCP 4개 통과 |
+
+## 설치 확인과 복구
+
+설정을 변경하지 않고 패키지, Hermes 경로, MCP 실행 파일, doctor만 확인할 수 있다.
 
 ```bash
-hermes -p ada mcp add vibe-finance-kit \
-  --command "$HOME/.hermes/workspace/vibe-finance-kit/.venv/bin/vibe-finance-kit"
-hermes -p ada mcp test vibe-finance-kit
+uv run python scripts/setup_hermes.py --check
 ```
 
-`mcp add`가 네 도구를 보여준 뒤 `Enable all 4 tools? [Y/n/select]`를 물으면 `Y`를 입력한다. 비대화형 셸에서는 입력이 없으면 등록이 취소되므로, 녹화와 실습에서는 이 확인 장면을 생략하지 않는다.
+빠른 설치가 중단됐다면 오류를 해결한 뒤 `uv run python scripts/setup_hermes.py`를 다시
+실행한다. 운영체제별 `.venv` 경로나 개별 Skill·MCP 명령을 직접 입력할 필요가 없다.
 
-등록 후에는 새 Hermes 세션을 열고 다음을 확인한다.
-
-1. `finance_kit_doctor`가 `order_tools: []`를 반환한다.
-2. `validate_etf_snapshot`, `compare_etf_snapshots`, `audit_backtest_report`가 보인다.
-3. 주문·브로커·계좌 관련 도구가 보이지 않는다.
-
-## Skill 설치
-
-세 Skill은 해당 프로필에 각각 설치한다. Hermes는 `SKILL.md`가 명시적으로 참조한 `references/` 파일도 함께 내려받고 보안 검사를 수행한다.
-
-```bash
-hermes -p ada skills install https://raw.githubusercontent.com/dandacompany/vibe-finance-kit/main/skills/finance-research-discipline/SKILL.md --yes
-hermes -p ada skills install https://raw.githubusercontent.com/dandacompany/vibe-finance-kit/main/skills/etf-value-analysis/SKILL.md --yes
-hermes -p ada skills install https://raw.githubusercontent.com/dandacompany/vibe-finance-kit/main/skills/backtest-audit/SKILL.md --yes
-hermes -p ada skills list
-```
-
-설치 대상:
+설치되는 역할:
 
 | Skill | 역할 |
 | --- | --- |
