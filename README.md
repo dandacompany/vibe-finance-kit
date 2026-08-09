@@ -28,7 +28,7 @@ Vibe-Trading에서 검증된 투자 리서치 원칙을 Hermes 실습에 맞게 
 
 ## Hermes 빠른 설치
 
-```bash
+```text
 git clone https://github.com/dandacompany/vibe-finance-kit.git
 cd vibe-finance-kit
 uv run python scripts/setup_hermes.py
